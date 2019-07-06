@@ -90,8 +90,9 @@ public class MainActivity extends AppCompatActivity {
         if (tags.size() == 0) return;
         final String tagWrapper = tags.get(currentTagIndex);
         mTextView.setText("Tag " + tagWrapper);
+        openWeb();
     }
-    public void openWeb(View view) {
+    public void openWeb() {
         final WebView lib_web=findViewById(R.id.webView);
         activity = this;
         progDailog = ProgressDialog.show(activity, "Loading", "Please wait...", true);
