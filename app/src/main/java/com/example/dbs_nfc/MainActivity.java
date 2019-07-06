@@ -1,54 +1,68 @@
 package com.example.dbs_nfc;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.annotation.NonNull;
-
-import android.view.MenuItem;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.net.http.SslError;
+import android.os.Bundle;
 import android.view.View;
+import android.webkit.SslErrorHandler;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.TextView;
 
+
 public class MainActivity extends AppCompatActivity {
-    private TextView mTextMessage;
-private  String url = "https://webauth.dbs.ie/idp/profile/SAML2/Redirect/SSO;jsessionid=19k4v8mhh831t1lon0bom03hpp?execution=e1s1";
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
-                    return true;
-                case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
-                    return true;
-                case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
-                    return true;
-            }
-            return false;
-        }
-    };
-
+    private ProgressDialog progDailog;
+    Activity activity;
+    private TextView mTextView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        mTextMessage = findViewById(R.id.message);
-        navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-    }
-    public void openWeb(View v){
 
 
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(url));
-        startActivity(intent);
     }
+
+    public void openWeb(View view) {
+        final WebView lib_web=findViewById(R.id.webView);
+        activity = this;
+        progDailog = ProgressDialog.show(activity, "Loading", "Please wait...", true);
+        progDailog.setCancelable(false);
+        String url = "https://books.dbs.ie/Shibboleth.sso/Login?target=https://books.dbs.ie/cgi-bin/koha/opac-user.pl";
+        lib_web.loadUrl(url);
+
+
+        lib_web.getSettings().setJavaScriptEnabled(true);
+
+        lib_web.setWebViewClient(new WebViewClient(){
+
+            public void onPageFinished(WebView view, String url){
+
+                progDailog.dismiss();
+
+            }
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                progDailog.show();
+                view.loadUrl(url);
+
+                return true;
+            }
+
+
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                handler.proceed(); // Ignore SSL certificate errors
+            }
+        });
+
+
+
+
+    }
+    class SSLTolerentWebViewClient extends WebViewClient {
+
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+            handler.proceed(); // Ignore SSL certificate errors
+        }}
 }
