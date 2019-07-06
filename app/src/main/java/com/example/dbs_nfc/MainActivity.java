@@ -2,6 +2,7 @@ package com.example.dbs_nfc;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.http.SslError;
@@ -25,18 +26,20 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+    static private ArrayList<String> tags = new ArrayList<String>();
+    static private int currentTagIndex = -1;
     private ProgressDialog progDailog;
     Activity activity;
     private NfcAdapter adapter = null;
     private TextView mTextView;
+    private PendingIntent pendingIntent = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        mTextView=findViewById(R.id.message);
         adapter = NfcAdapter.getDefaultAdapter(this);
     }
-
 
     @Override
     public void onNewIntent(Intent intent) {
@@ -44,11 +47,50 @@ public class MainActivity extends AppCompatActivity {
 
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         String tagId = Utils.bytesToHex(tag.getId());
- mTextView=findViewById(R.id.message);
-        mTextView.setText("Tag " + tagId);
+        tagId=tagId+Utils.now();
+
+        Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+        if (tags.size() == 1) {
+            Toast.makeText(this, "Swipe right to see previous tags", Toast.LENGTH_LONG).show();
+        }
+        tags.add(tagId);
+        currentTagIndex = tags.size() - 1;
+        displayTag();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (!adapter.isEnabled()) {
+            Utils.showNfcSettingsDialog(this);
+            return;
+        }
+
+        if (pendingIntent == null) {
+            pendingIntent = PendingIntent.getActivity(this, 0,
+                    new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+
+            mTextView.setText("Scan a tag");
+        }
+
+        displayTag();
+
+        adapter.enableForegroundDispatch(this, pendingIntent, null, null);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        adapter.disableForegroundDispatch(this);
     }
 
 
+    private void displayTag() {
+        if (tags.size() == 0) return;
+        final String tagWrapper = tags.get(currentTagIndex);
+        mTextView.setText("Tag " + tagWrapper);
+    }
     public void openWeb(View view) {
         final WebView lib_web=findViewById(R.id.webView);
         activity = this;
