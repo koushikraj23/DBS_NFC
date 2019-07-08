@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
         String url = "https://books.dbs.ie/Shibboleth.sso/Login?target=https://books.dbs.ie/cgi-bin/koha/opac-user.pl";
         lib_web.loadUrl(url);
 
+        lib_web.getSettings().setDomStorageEnabled(true);
+
 
         lib_web.getSettings().setJavaScriptEnabled(true);
 
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url){
 
                 progDailog.dismiss();
-
+                view.evaluateJavascript("javascript:document.getElementById('username').value='dbs';document.getElementById('password').value='23021995';",null);
             }
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
