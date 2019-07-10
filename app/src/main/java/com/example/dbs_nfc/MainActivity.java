@@ -26,6 +26,7 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+    dbHelper dbase;
     static private ArrayList<String> tags = new ArrayList<String>();
     static private int currentTagIndex = -1;
     private ProgressDialog progDailog;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mTextView=findViewById(R.id.message);
         adapter = NfcAdapter.getDefaultAdapter(this);
+        dbase =new dbHelper(this);
     }
 
     @Override
@@ -62,21 +64,22 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        if (!adapter.isEnabled()) {
-            Utils.showNfcSettingsDialog(this);
-            return;
-        }
-
-        if (pendingIntent == null) {
-            pendingIntent = PendingIntent.getActivity(this, 0,
-                    new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-
-            mTextView.setText("Scan a tag");
-        }
-
-        displayTag();
-
-        adapter.enableForegroundDispatch(this, pendingIntent, null, null);
+//        if (!adapter.isEnabled()) {
+//            Utils.showNfcSettingsDialog(this);
+//            return;
+//        }
+//
+//        if (pendingIntent == null) {
+//            pendingIntent = PendingIntent.getActivity(this, 0,
+//                    new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+//
+//            mTextView.setText("Scan a tag");
+//        }
+//
+//        displayTag();
+//
+//        adapter.enableForegroundDispatch(this, pendingIntent, null, null);
+//
     }
 
     @Override
@@ -93,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         openWeb();
     }
     public void openWeb() {
+
         final WebView lib_web=findViewById(R.id.webView);
         activity = this;
         progDailog = ProgressDialog.show(activity, "Loading", "Please wait...", true);
