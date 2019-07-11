@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-
+dbase.insert("DBS","142245P","Koushikraj");
 //        if (!adapter.isEnabled()) {
 //            Utils.showNfcSettingsDialog(this);
 //            return;
