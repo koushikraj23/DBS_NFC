@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextView;
     private PendingIntent pendingIntent = null;
     private String tagId;
-    @Override
+    private static final String TAG = dbHelper.class.getName();
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -53,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
 
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
          tagId = Utils.bytesToHex(tag.getId());
-        tagId=tagId+Utils.now();
-
+        tagId=tagId;
+        Log.e(TAG,tagId);
         Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
 
         tags.add(tagId);
