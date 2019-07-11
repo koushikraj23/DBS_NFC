@@ -22,6 +22,7 @@ public class dbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
 db.execSQL("create table "+tb_name+" (ID Integer Primary Key AutoIncrement,Name text,Card text )");
 
     }
@@ -33,12 +34,12 @@ onCreate(db);
     }
 
 
-    public void insert(String db, String cardID, String name){
+    public void insert( String cardID, String name){
         SQLiteDatabase sq=this.getWritableDatabase();
         ContentValues content=new ContentValues();
         content.put(col2,name);
         content.put(col3,cardID);
-        long insert = db.insert(tb_name,null, content);
+        long insert = sq.insert(tb_name,null, content);
         if(insert>0){
             Log.e(TAG, "insert: " );
         }
