@@ -41,7 +41,7 @@ onCreate(db);
         content.put(col3,cardID);
         long insert = sq.insert(tb_name,null, content);
         if(insert>0){
-            Log.e(TAG, "insert: " );
+            Log.e(TAG, "insert: "+cardID+"-"+name );
         }
         else{
 

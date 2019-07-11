@@ -2,8 +2,10 @@ package com.example.dbs_nfc;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.view.View;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -55,5 +57,12 @@ final class Utils {
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+
+    public static  void storeID(Context context, String tagId, String name){
+        dbHelper dbase;
+         dbase=new dbHelper(context);
+        dbase.insert(tagId,name);
     }
 }

@@ -17,6 +17,8 @@ import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private NfcAdapter adapter = null;
     private TextView mTextView;
     private PendingIntent pendingIntent = null;
+    private String tagId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         mTextView=findViewById(R.id.message);
         adapter = NfcAdapter.getDefaultAdapter(this);
         dbase =new dbHelper(this);
-        dbase.insert("142245P","Koushikraj");
+
     }
 
     @Override
@@ -49,16 +52,41 @@ public class MainActivity extends AppCompatActivity {
         Log.d("onNewIntent", "Discovered tag with intent " + intent);
 
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        String tagId = Utils.bytesToHex(tag.getId());
+         tagId = Utils.bytesToHex(tag.getId());
         tagId=tagId+Utils.now();
 
         Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-        if (tags.size() == 1) {
-            Toast.makeText(this, "Swipe right to see previous tags", Toast.LENGTH_LONG).show();
-        }
+
         tags.add(tagId);
         currentTagIndex = tags.size() - 1;
+
         displayTag();
+        storeData();
+    }
+
+
+    public void storeData(){
+
+        Button btn=findViewById(R.id.button2);
+        btn.setOnClickListener(
+                new View.OnClickListener(){
+
+                    @Override
+                    public void onClick(View v) {
+                       st();
+                    }
+                }
+        );
+
+
+
+
+    }
+
+
+    public void st(){
+        EditText name =(EditText)findViewById(R.id.editText);
+        Utils.storeID(this,tagId,name.getText().toString());
     }
 
     @Override
@@ -94,9 +122,9 @@ public class MainActivity extends AppCompatActivity {
         if (tags.size() == 0) return;
         final String tagWrapper = tags.get(currentTagIndex);
         mTextView.setText("Tag " + tagWrapper);
-        openWeb();
+       // openWeb();
     }
-    public void openWeb() {
+    public void openWeb(View view) {
 
         final WebView lib_web=findViewById(R.id.webView);
         activity = this;
