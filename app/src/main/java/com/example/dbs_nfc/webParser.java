@@ -43,15 +43,17 @@ public class webParser {
                     Connection.Response loginPageResponse =
                             Jsoup.connect("https://books.dbs.ie/Shibboleth.sso/Login?target=https://books.dbs.ie/cgi-bin/koha/opac-user.pl")
                                     .timeout(10 * 1000)
-                                    .followRedirects(true).validateTLSCertificates(false)
+                                    .userAgent("Mozilla/5.0")
+                                    .followRedirects(true)
+                                    .validateTLSCertificates(false)
                                     .execute();
-
+                    System.out.println("Fetched login page");
                     Map<String, String> mapLoginPageCookies = loginPageResponse.cookies();
-
-                    Connection.Response loginForm = Jsoup.connect("https://books.dbs.ie/Shibboleth.sso/Login?target=https://books.dbs.ie/cgi-bin/koha/opac-user.pl")
-                            .referrer("https://webauth.dbs.ie/idp/profile/SAML2/Redirect/SSO;jsessionid=192vt1n6ng9dwsyf2ck6hlh1v?execution=e1s1")
-                            .method(Connection.Method.POST)
-                            .validateTLSCertificates(false).execute();
+                    System.out.println(mapLoginPageCookies);
+//                    Connection.Response loginForm = Jsoup.connect("https://books.dbs.ie/Shibboleth.sso/Login?target=https://books.dbs.ie/cgi-bin/koha/opac-user.pl")
+//                            .referrer("https://webauth.dbs.ie/idp/profile/SAML2/Redirect/SSO;jsessionid=192vt1n6ng9dwsyf2ck6hlh1v?execution=e1s1")
+//                            .method(Connection.Method.POST)
+//                            .validateTLSCertificates(false).execute();
 
 //                    Connection.Response loginForm1  = Jsoup.connect("https://books.dbs.ie/Shibboleth.sso/Login?target=https://books.dbs.ie/cgi-bin/koha/opac-user.pl")
 //                            .cookies(mapLoginPageCookies)
@@ -63,16 +65,17 @@ public class webParser {
 //                            .followRedirects(true)
 //                            .execute();
 
-                    Connection.Response loginForm1 = Jsoup.connect("https://webauth.dbs.ie/idp/profile/SAML2/Redirect/SSO?execution=e2s1")
+                    Connection.Response loginForm1 = Jsoup.connect("https://webauth.dbs.ie/idp/profile/SAML2/Redirect/SSO?execution=e1s1")
                             //referrer will be the login page's URL
-                            .referrer("https://webauth.dbs.ie/idp/profile/SAML2/Redirect/SSO;jsessionid=192vt1n6ng9dwsyf2ck6hlh1v?execution=e1s1")
+                            .referrer("https://books.dbs.ie/Shibboleth.sso/Login?target=https://books.dbs.ie/cgi-bin/koha/opac-user.pl")
                             //user agent
-                            .userAgent("Mozilla/5.0")
+                            .userAgent("Mozilla")
+
                             //connect and read time out
                             .timeout(10 * 1000)
                             //post parameters
                             .data("j_username", "10506917")
-                            .data("j_password", "Kou@23021995")
+                            .data("j_password", "")
                             .data("_eventId_proceed", "")
 //                            .data("j_password", "Kou@23021995")
                             //cookies received from login page
@@ -81,10 +84,37 @@ public class webParser {
                             .followRedirects(true)
                             .validateTLSCertificates(false)
                             .execute();
-                    System.out.println("HTTP Status Code: " + loginForm1.statusCode());
+
+                    System.out.println("HTTP Status Code1: " + loginForm1.statusCode());
+                    Map<String, String> mapLoginPageCookies2=loginForm1.cookies();
+                    Map<String, String> mapLoginPageCookies3=mapLoginPageCookies;
+                    mapLoginPageCookies3.put(mapLoginPageCookies2.keySet().toArray()[0].toString(),mapLoginPageCookies2.get(mapLoginPageCookies2.keySet().toArray()[0]));
+
+
+                    System.out.println(mapLoginPageCookies3);
                     //System.out.println(document);
-                    Document document = loginForm1.parse();
-                    System.out.println(document);
+                    Connection.Response loginForm2 = Jsoup.connect("https://webauth.dbs.ie/idp/profile/SAML2/Redirect/SSO?execution=e1s2")
+                            //referrer will be the login page's URL
+                            .referrer("https://webauth.dbs.ie/idp/profile/SAML2/Redirect/SSO?execution=e1s2")
+                            //user agent
+                            .userAgent("Mozilla")
+                            //connect and read time out
+                            .timeout(10 * 1000)
+                            //post parameters
+                            .data("_shib_idp_consentIds","givenName" )
+                            .data("_shib_idp_consentIds","sn")
+                            .data("_shib_idp_consentIds","cn")
+                            .data("_shib_idp_consentOptions","_shib_idp_rememberConsent")
+                            .data("_eventId_proceed","Accept")
+//
+                            .cookies(mapLoginPageCookies3)
+                            //many websites redirects the user after login, so follow them
+                            .followRedirects(true)
+                            .validateTLSCertificates(false)
+                            .execute();
+                    mapLoginPageCookies3=loginForm2.cookies();
+                    Document document = loginForm2.parse();
+                    System.out.println(mapLoginPageCookies3);
 
 
 
