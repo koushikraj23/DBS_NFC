@@ -62,7 +62,7 @@ final class Utils {
 
     public static  void storeID(Context context, String tagId, String name){
         dbHelper dbase;
-         dbase=new dbHelper(context);
+         dbase=new dbHelper();
         dbase.insert(tagId,name);
     }
 }

@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mTextView=findViewById(R.id.message);
         adapter = NfcAdapter.getDefaultAdapter(this);
-        dbase =new dbHelper(this);
+        dbase =new dbHelper();
 
     }
 
