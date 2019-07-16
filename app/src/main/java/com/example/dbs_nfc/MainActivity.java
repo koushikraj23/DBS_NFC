@@ -9,6 +9,7 @@ import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.TextView;
 
 
@@ -20,8 +21,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-webParser w=new webParser();
-w.getWebsite();
+
+
+        Button b=findViewById(R.id.button2);
+        b.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                webParser w=new webParser();
+                w.getWebsite();
+
+            }
+        });
+
+
 
     }
 
