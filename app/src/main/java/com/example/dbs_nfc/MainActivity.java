@@ -16,7 +16,9 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+
 import android.widget.EditText;
+
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -46,6 +48,19 @@ public class MainActivity extends AppCompatActivity {
     public void onNewIntent(Intent intent) {
         Log.d("onNewIntent", "Discovered tag with intent " + intent);
 
+
+        Button b=findViewById(R.id.button2);
+        b.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                webParser w=new webParser();
+                w.getWebsite();
+
+            }
+        });
+
+
+
+
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
          tagId = Utils.bytesToHex(tag.getId());
         tagId=tagId;
@@ -57,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         displayTag();
         storeData();
+
     }
 
 
@@ -129,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
         String url = "https://books.dbs.ie/Shibboleth.sso/Login?target=https://books.dbs.ie/cgi-bin/koha/opac-user.pl";
         lib_web.loadUrl(url);
 
+        lib_web.getSettings().setDomStorageEnabled(true);
+
 
         lib_web.getSettings().setJavaScriptEnabled(true);
 
@@ -137,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url){
 
                 progDailog.dismiss();
-
+                view.evaluateJavascript("javascript:document.getElementById('username').value='dbs';document.getElementById('password').value='23021995';",null);
             }
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
