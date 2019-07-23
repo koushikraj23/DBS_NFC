@@ -9,10 +9,10 @@
 
     <TextView
         android:id="@+id/message"
-        android:layout_width="95dp"
-        android:layout_height="38dp"
+        android:layout_width="76dp"
+        android:layout_height="28dp"
         android:layout_marginTop="33dp"
-        android:layout_marginEnd="48dp"
+        android:layout_marginEnd="28dp"
         android:layout_marginBottom="111dp"
         android:text="@string/title_home"
         app:layout_constraintBottom_toTopOf="@+id/webView"
@@ -28,7 +28,7 @@
         android:text="Open Library"
         app:layout_constraintBottom_toTopOf="@+id/webView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.46"
+        app:layout_constraintHorizontal_bias="0.721"
         app:layout_constraintStart_toStartOf="parent" />
 
     <WebView
@@ -43,30 +43,28 @@
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="0dp"
-        android:layout_height="61dp"
+        android:layout_width="80dp"
+        android:layout_height="57dp"
 
-        android:layout_marginTop="21dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="25dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="92dp"
+        android:layout_marginEnd="100dp"
         android:text="Button"
-        app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/id"
+        app:layout_constraintEnd_toStartOf="@+id/button"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/id"
-        android:layout_width="0dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="151dp"
-        android:layout_marginEnd="40dp"
+        android:layout_width="122dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="124dp"
         android:layout_marginBottom="28dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Name"
         app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintEnd_toStartOf="@+id/button2"
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -82,5 +80,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/webView"
         app:menu="@menu/bottom_nav_menu" />
+
+    <EditText
+        android:id="@+id/pswd"
+        android:layout_width="126dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="24dp"
+        android:ems="10"
+        android:inputType="textPassword"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintStart_toEndOf="@+id/id"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.964" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
