@@ -6,8 +6,6 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.http.SslError;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -20,11 +18,8 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -40,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = dbHelper.class.getName();
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.Login);
         mTextView=findViewById(R.id.message);
         adapter = NfcAdapter.getDefaultAdapter(this);
         dbase =new dbHelper();
@@ -85,8 +80,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void st(){
-        EditText name =(EditText)findViewById(R.id.editText);
-        Utils.storeID(this,tagId,name.getText().toString());
+        EditText id =(EditText)findViewById(R.id.id);
+        EditText pswd =(EditText)findViewById(R.id.pswd);
+        Utils.storeID(this,tagId,id.getText().toString(),pswd.getText().toString());
     }
 
     @Override

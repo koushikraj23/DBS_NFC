@@ -46,25 +46,15 @@ public class dbHelper{
 //    }
 
 
-    public void insert( String cardID, String name){
-//        SQLiteDatabase sq=this.getWritableDatabase();
-//        ContentValues content=new ContentValues();
-//        content.put(col2,name);
-//        content.put(col3,cardID);
-//        long insert = sq.insert(tb_name,null, content);
-//        if(insert>0){
-//            Log.e(TAG, "insert: "+cardID+"-"+name );
-//        }
-//        else{
-//
-//        }
+    public void insert( String cardID, String name,String pswd){
+
 
 
 
         Map<String, Object> user = new HashMap<>();
         user.put("Name", name);
         user.put("cardId", cardID);
-
+        user.put("Pswd", pswd);
 
 // Add a new document with a generated ID
         db.collection("users")
