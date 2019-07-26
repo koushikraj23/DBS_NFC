@@ -67,7 +67,7 @@ public class webParser {
 
                     Connection.Response loginForm1 = Jsoup.connect("https://webauth.dbs.ie/idp/profile/SAML2/Redirect/SSO?execution=e1s1")
                             //referrer will be the login page's URL
-                            .referrer("https://books.dbs.ie/Shibboleth.sso/Login?target=https://books.dbs.ie/cgi-bin/koha/opac-user.pl")
+                            .referrer("https://books.dbs.ie/Shibboleth.sso/login?target=https://books.dbs.ie/cgi-bin/koha/opac-user.pl")
                             //user agent
                             .userAgent("Mozilla")
 

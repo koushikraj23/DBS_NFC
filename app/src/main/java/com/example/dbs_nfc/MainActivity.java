@@ -37,10 +37,19 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = dbHelper.class.getName();
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.Login);
+//        setContentView(R.layout.login);
+        setContentView(R.layout.activity_main);
         mTextView=findViewById(R.id.message);
         adapter = NfcAdapter.getDefaultAdapter(this);
         dbase =new dbHelper();
+        Button b=findViewById(R.id.button2);
+        b.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                webParser w=new webParser();
+                w.getWebsite();
+
+            }
+        });
 
     }
 
@@ -105,21 +114,21 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        if (!adapter.isEnabled()) {
-            Utils.showNfcSettingsDialog(this);
-            return;
-        }
+//        if (!adapter.isEnabled()) {
+//            Utils.showNfcSettingsDialog(this);
+//            return;
+//        }
+//
+//        if (pendingIntent == null) {
+//            pendingIntent = PendingIntent.getActivity(this, 0,
+//                    new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+//
+//            mTextView.setText("Scan a tag");
+//        }
 
-        if (pendingIntent == null) {
-            pendingIntent = PendingIntent.getActivity(this, 0,
-                    new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+//        displayTag();
 
-            mTextView.setText("Scan a tag");
-        }
-
-        displayTag();
-
-        adapter.enableForegroundDispatch(this, pendingIntent, null, null);
+//        adapter.enableForegroundDispatch(this, pendingIntent, null, null);
 //
     }
 
@@ -142,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         activity = this;
         progDailog = ProgressDialog.show(activity, "Loading", "Please wait...", true);
         progDailog.setCancelable(false);
-        String url = "https://books.dbs.ie/Shibboleth.sso/Login?target=https://books.dbs.ie/cgi-bin/koha/opac-user.pl";
+        String url = "https://webauth.dbs.ie/idp/profile/SAML2/Redirect/SSO;jsessionid=193exgnish94l1vpx4ob4oh57c?execution=e1s1";
         lib_web.loadUrl(url);
 
         lib_web.getSettings().setDomStorageEnabled(true);
@@ -155,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url){
 
                 progDailog.dismiss();
-                view.evaluateJavascript("javascript:document.getElementById('username').value='dbs';document.getElementById('password').value='23021995';",null);
+             //   view.evaluateJavascript("javascript:document.getElementById('username').value='dbs';document.getElementById('password').value='23021995';",null);
             }
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
