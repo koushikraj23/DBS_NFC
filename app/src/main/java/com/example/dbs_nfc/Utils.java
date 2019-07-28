@@ -24,6 +24,9 @@ final class Utils {
             hexChars[j * 2] = hexArray[v >>> 4];
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
+        String tag="0x" + new String(hexChars);
+        dbHelper dbase=new dbHelper();
+        dbase.readData(tag);
         return "0x" + new String(hexChars);
     }
 
@@ -61,8 +64,10 @@ final class Utils {
 
 
     public static  void storeID(Context context, String tagId, String name,String pswd){
-        dbHelper dbase;
-         dbase=new dbHelper();
+        dbHelper dbase=new dbHelper();
         dbase.insert(tagId,name,pswd);
     }
+
+
+
 }
