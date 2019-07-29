@@ -35,21 +35,24 @@ public class MainActivity extends AppCompatActivity {
     private PendingIntent pendingIntent = null;
     private String tagId;
     private static final String TAG = dbHelper.class.getName();
+    private UserDetails user=new UserDetails();
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.login);
-        setContentView(R.layout.activity_main);
-        mTextView=findViewById(R.id.message);
+        setContentView(R.layout.scantag);
+//        setContentView(R.layout.activity_main);
+
+//        mTextView=findViewById(R.id.message);
         adapter = NfcAdapter.getDefaultAdapter(this);
         dbase =new dbHelper();
-        Button b=findViewById(R.id.button2);
-        b.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                webParser w=new webParser();
-                w.getWebsite();
-
-            }
-        });
+//        Button b=findViewById(R.id.button2);
+//        b.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                webParser w=new webParser();
+//                w.getWebsite();
+//
+//            }
+//        });
 
     }
 
@@ -57,15 +60,16 @@ public class MainActivity extends AppCompatActivity {
     public void onNewIntent(Intent intent) {
         Log.d("onNewIntent", "Discovered tag with intent " + intent);
 
-
-        Button b=findViewById(R.id.button2);
-        b.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                webParser w=new webParser();
-                w.getWebsite();
-
-            }
-        });
+        setContentView(R.layout.login);
+        mTextView=findViewById(R.id.message);
+//        Button b=findViewById(R.id.button2);
+//        b.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                webParser w=new webParser();
+//                w.getWebsite();
+//
+//            }
+//        });
 
 
 
@@ -78,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
 
         tags.add(tagId);
         currentTagIndex = tags.size() - 1;
+        dbHelper dbase=new dbHelper();
+        user=  dbase.readTagData(tagId);
 
         displayTag();
         storeData();
@@ -93,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onClick(View v) {
-                       st();
+                        storeInDB();
                     }
                 }
         );
@@ -104,31 +110,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void st(){
+    public void storeInDB(){
         EditText id =(EditText)findViewById(R.id.id);
         EditText pswd =(EditText)findViewById(R.id.pswd);
-        Utils.storeID(this,tagId,id.getText().toString(),pswd.getText().toString());
+       Utils.storeID(this,tagId,id.getText().toString(),pswd.getText().toString());
     }
 
     @Override
     public void onResume() {
+       // mTextView=findViewById(R.id.message);
         super.onResume();
 
-//        if (!adapter.isEnabled()) {
-//            Utils.showNfcSettingsDialog(this);
-//            return;
-//        }
+        if (!adapter.isEnabled()) {
+            Utils.showNfcSettingsDialog(this);
+            return;
+        }
 //
-//        if (pendingIntent == null) {
-//            pendingIntent = PendingIntent.getActivity(this, 0,
-//                    new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        if (pendingIntent == null) {
+            pendingIntent = PendingIntent.getActivity(this, 0,
+                    new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+
+           // mTextView.setText("Scan a tag");
+        }
 //
-//            mTextView.setText("Scan a tag");
-//        }
-
-//        displayTag();
-
-//        adapter.enableForegroundDispatch(this, pendingIntent, null, null);
+        displayTag();
+//
+        adapter.enableForegroundDispatch(this, pendingIntent, null, null);
 //
     }
 

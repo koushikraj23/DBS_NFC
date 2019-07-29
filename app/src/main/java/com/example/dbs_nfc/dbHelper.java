@@ -17,6 +17,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,7 @@ public class dbHelper{
     public final static String col1="ID";
     public final static String col2="Name";
     public final static String col3="Card";
+    public   static UserDetails user=new UserDetails();
     private static final String TAG = dbHelper.class.getName();
 //    public dbHelper(@Nullable Context context) {
 //        super(context, db_name, null, 1);
@@ -55,37 +57,10 @@ public class dbHelper{
 
 
 
-        Map<String, Object> user = new HashMap<>();
-        user.put("Name", name);
-        user.put("cardId", cardID);
-        user.put("Pswd", pswd);
 
-// Add a new document with a generated ID
-        db.collection("users")
-                .add(user)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
-                    }
-                });
-
-
-    }
-
-
-    public void readData( String cardID){
-
-
-        Map<String, Object> user = new HashMap<>();
-
-        user.put("cardId", cardID);
+        user.setName(name);
+        user.setCardId(cardID);
+        user.setPswd(pswd);
         db.collection("users")
                 .whereEqualTo("cardId", cardID)
                 .get()
@@ -94,29 +69,68 @@ public class dbHelper{
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                UserDetails u=document.toObject(UserDetails.class);
+                                Log.d(TAG, document.getId() + " => Already present");
+
                             }
                         } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            db.collection("users")
+                                    .add(user)
+                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                        @Override
+                                        public void onSuccess(DocumentReference documentReference) {
+                                            Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w(TAG, "Error adding document", e);
+                                        }
+                                    });
                         }
                     }
                 });
 // Add a new document with a generated ID
+
+
+
+    }
+
+
+    public UserDetails readTagData( String cardID){
+
+
+//   Map<String, Object> user = new HashMap<>();
+
+
+      //  user.put("cardId", cardID);
         db.collection("users")
-                .add(user)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                .whereEqualTo("cardId", cardID)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                 UserDetails uTemp=document.toObject(UserDetails.class);
+                                Log.d(TAG, document.getId() + " => " +uTemp.getCardId()+uTemp.getName());
+                                user.setName(uTemp.getName());
+                                Log.d(TAG, user.getName());
+                                user.setCardId(uTemp.getCardId());
+                                user.setPswd(uTemp.getPswd());
+
+
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+
+
+                        }
                     }
                 });
+        Log.d(TAG,user.getCardId()+"--'"+user.getName());
 
-
+        return user;
     }
 }

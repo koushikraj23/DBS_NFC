@@ -25,8 +25,7 @@ final class Utils {
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
         String tag="0x" + new String(hexChars);
-        dbHelper dbase=new dbHelper();
-        dbase.readData(tag);
+
         return "0x" + new String(hexChars);
     }
 
