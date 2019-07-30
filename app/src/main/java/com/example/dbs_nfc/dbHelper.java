@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -28,10 +29,10 @@ public class dbHelper{
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     public final static String db_name="DBS";
     public final static String tb_name="User_Details";
-    public final static String col1="ID";
+    public  static String cardId;
     public final static String col2="Name";
     public final static String col3="Card";
-    public   static UserDetails user=new UserDetails();
+    private  static  UserDetails user;
     private static final String TAG = dbHelper.class.getName();
 //    public dbHelper(@Nullable Context context) {
 //        super(context, db_name, null, 1);
@@ -57,10 +58,13 @@ public class dbHelper{
 
 
 
-
+System.out.println("Insert opertaion");
         user.setName(name);
         user.setCardId(cardID);
         user.setPswd(pswd);
+
+
+
         db.collection("users")
                 .whereEqualTo("cardId", cardID)
                 .get()
@@ -98,13 +102,10 @@ public class dbHelper{
     }
 
 
-    public UserDetails readTagData( String cardID){
+    public UserDetails readTagData  (String cardID){
 
 
-//   Map<String, Object> user = new HashMap<>();
 
-
-      //  user.put("cardId", cardID);
         db.collection("users")
                 .whereEqualTo("cardId", cardID)
                 .get()
@@ -120,7 +121,6 @@ public class dbHelper{
                                 user.setCardId(uTemp.getCardId());
                                 user.setPswd(uTemp.getPswd());
 
-
                             }
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
@@ -129,8 +129,49 @@ public class dbHelper{
                         }
                     }
                 });
+
+        Log.d(TAG, user.getCardId() + "--'" + user.getName());
+
+        return user;
+    }
+
+    public UserDetails readTagDataAsyn(final MainActivity.readCallback rCallback, String cardId){
+
+//   Map<String, Object> user = new HashMap<>();
+
+        user=new UserDetails();
+        //  user.put("cardId", cardID);
+        db.collection("users")
+                .whereEqualTo("cardId", cardId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                UserDetails uTemp=document.toObject(UserDetails.class);
+                                Log.d(TAG, document.getId() + " => " +uTemp.getCardId()+uTemp.getName());
+                                user.setName(uTemp.getName());
+                                Log.d(TAG, user.getName());
+                                user.setCardId(uTemp.getCardId());
+                                user.setPswd(uTemp.getPswd());
+
+
+                            }
+                            rCallback.onCallback(user);
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+
+
+                        }
+                    }
+                });
+
         Log.d(TAG,user.getCardId()+"--'"+user.getName());
 
         return user;
     }
+
+
+
 }
