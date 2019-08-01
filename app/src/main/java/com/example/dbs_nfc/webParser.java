@@ -147,6 +147,8 @@ public class webParser {
                     System.out.println(document);
                     Element masthead = document.select(".user_checkouts_count").first();
                     Element masthead2 = document.select(".user_fines_count").first();
+
+
                     System.out.println(masthead.text()+"---"+masthead2.text());
 
                     Connection.Response loginForm4 = Jsoup.connect("https://books.dbs.ie/cgi-bin/koha/opac-user.pl#opac-user-checkouts")
@@ -168,11 +170,20 @@ public class webParser {
 
                     Document document2 = loginForm4.parse();
                     System.out.println(document2);
-                    System.out.println(mapLoginPageCookies);
-                    System.out.println(mapLoginPageCookies2);
-                    System.out.println(mapLoginPageCookies3);
-                    System.out.println(mapLoginPageCookies4);
-                    System.out.println(mapLoginPageCookies5);
+                    System.out.println("Blog:");
+//                    Element booklist = document2.getElementById("checkoutst");
+//                    Elements booklist = document2.select(".author");
+//                    Elements booklist = document2.select(".author");
+//                    Elements booklist = document2.select(".title >a");
+//                    Elements booklist = document2.select(".date_due > span");
+                    Elements booklist = document2.select(".renew > a");
+                    System.out.println("Blog:");
+                    System.out.println("Blog:"+booklist.attr("abs:href"));
+                    for (Element tr : booklist) {
+
+                        System.out.println("Blog2:"+tr.attr("abs:href"));
+                    }
+
                 } catch (IOException e) {
                     builder.append("Error : ").append(e.getMessage()).append("\n");
                 }

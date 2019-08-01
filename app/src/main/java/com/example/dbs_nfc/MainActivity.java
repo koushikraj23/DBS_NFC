@@ -73,20 +73,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.login);
-        setContentView(R.layout.scantag);
-//        setContentView(R.layout.activity_main);
+//        setContentView(R.layout.scantag);
+        setContentView(R.layout.activity_main);
 
 //        mTextView=findViewById(R.id.message);
         adapter = NfcAdapter.getDefaultAdapter(this);
         dbase =new dbHelper();
-//        Button b=findViewById(R.id.button2);
-//        b.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                webParser w=new webParser();
-//                w.getWebsite();
-//
-//            }
-//        });
+        Button b=findViewById(R.id.button2);
+        b.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                webParser w=new webParser();
+                w.getWebsite();
+
+            }
+        });
 
     }
 
@@ -179,21 +179,21 @@ dbase.readTagData(tagId);
        // mTextView=findViewById(R.id.message);
         super.onResume();
 
-        if (!adapter.isEnabled()) {
-            Utils.showNfcSettingsDialog(this);
-            return;
-        }
+//        if (!adapter.isEnabled()) {
+//            Utils.showNfcSettingsDialog(this);
+//            return;
+//        }
+////
+//        if (pendingIntent == null) {
+//            pendingIntent = PendingIntent.getActivity(this, 0,
+//                    new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 //
-        if (pendingIntent == null) {
-            pendingIntent = PendingIntent.getActivity(this, 0,
-                    new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-
-           // mTextView.setText("Scan a tag");
-        }
+//           // mTextView.setText("Scan a tag");
+//        }
 //
       //  displayTag();
 //
-        adapter.enableForegroundDispatch(this, pendingIntent, null, null);
+//        adapter.enableForegroundDispatch(this, pendingIntent, null, null);
 //
     }
 
