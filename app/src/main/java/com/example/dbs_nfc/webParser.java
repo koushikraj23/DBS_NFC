@@ -14,12 +14,17 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class webParser {
     private static final String TAG = webParser.class.getName();
-    public void getWebsite() {
-        new Thread(new Runnable() {
+    private BookDetails bookDetails;
+    ArrayList<BookDetails> booklist=new ArrayList<>();
+    public ArrayList<BookDetails> getWebsite(final MainActivity.bookCallback rCallback) {
+
+//
+        new Thread( new Runnable() {
             @Override
             public void run() {
                 final StringBuilder builder = new StringBuilder();
@@ -171,18 +176,26 @@ public class webParser {
                     Document document2 = loginForm4.parse();
                     System.out.println(document2);
                     System.out.println("Blog:");
-//                    Element booklist = document2.getElementById("checkoutst");
-//                    Elements booklist = document2.select(".author");
-//                    Elements booklist = document2.select(".author");
-//                    Elements booklist = document2.select(".title >a");
-//                    Elements booklist = document2.select(".date_due > span");
-                    Elements booklist = document2.select(".renew > a");
-                    System.out.println("Blog:");
-                    System.out.println("Blog:"+booklist.attr("abs:href"));
-                    for (Element tr : booklist) {
 
-                        System.out.println("Blog2:"+tr.attr("abs:href"));
+//                    Element booklist = document2.getElementById("checkoutst");
+                    Elements author = document2.select(".author");
+//                    Elements booklist = document2.select(".author");
+                    Elements title = document2.select(".title >a");
+                    Elements date_due = document2.select(".date_due > span");
+                    Elements rdate = document2.select(".renew > a");
+                    System.out.println("Blog:");
+//                    System.out.println("Blog:"+booklist.attr("abs:href"));
+                    for(int i = 0; i< title.size(); i++) {
+                      bookDetails=new BookDetails (title.get(i).text(),author.get(i).text(),date_due.get(i).text(),rdate.get(i).attr("abs:href"));
+                      booklist.add(bookDetails);
                     }
+
+                    for (BookDetails bk : booklist) {
+
+                        System.out.println("Blog2:"+bk.getTitle()+"--"+bk.getAuthor()+"---"+bk.getDueDate()+"--"+bk.getrLink());
+                    }
+
+                    rCallback.onCallback(booklist);
 
                 } catch (IOException e) {
                     builder.append("Error : ").append(e.getMessage()).append("\n");
@@ -190,8 +203,11 @@ public class webParser {
                 String x=builder.toString();
                 Log.e(TAG, "run: "+x );
 
+//
             }
         }).start();
+
+        return  booklist;
     }
     class SSLTolerentWebViewClient extends WebViewClient {
 
