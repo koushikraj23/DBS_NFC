@@ -21,6 +21,7 @@ public class webParser {
     private static final String TAG = webParser.class.getName();
     private BookDetails bookDetails;
     ArrayList<BookDetails> booklist=new ArrayList<>();
+
     public ArrayList<BookDetails> getWebsite(final MainActivity.bookCallback rCallback) {
 
 //
@@ -124,7 +125,7 @@ public class webParser {
 
                     System.out.println(mapLoginPageCookies3);
                     Document document1 = loginForm2.parse();
-                    System.out.println(document1);
+//                    System.out.println(document1);
 
 
                     Element input = document1.select("input[name=SAMLResponse]").first();
@@ -182,11 +183,11 @@ public class webParser {
 //                    Elements booklist = document2.select(".author");
                     Elements title = document2.select(".title >a");
                     Elements date_due = document2.select(".date_due > span");
-                    Elements rdate = document2.select(".renew > a");
+                    Elements rlink = document2.select(".renew > a");
                     System.out.println("Blog:");
 //                    System.out.println("Blog:"+booklist.attr("abs:href"));
                     for(int i = 0; i< title.size(); i++) {
-                      bookDetails=new BookDetails (title.get(i).text(),author.get(i).text(),date_due.get(i).text(),rdate.get(i).attr("abs:href"));
+                      bookDetails=new BookDetails (title.get(i).text(),author.get(i).text(),date_due.get(i).text(),rlink.get(i).attr("abs:href"));
                       booklist.add(bookDetails);
                     }
 

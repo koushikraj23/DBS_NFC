@@ -16,10 +16,10 @@
         android:layout_height="48dp"
         android:text="TextView" />
 
-    <!--<Button-->
-        <!--android:id="@+id/renew"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Renew" />-->
+    <Button
+        android:id="@+id/renew"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Renew" />
 
 </LinearLayout>
