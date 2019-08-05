@@ -6,14 +6,24 @@ public class UserDetails {
     private String cardId;
     private String pswd;
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    private String uuid;
     public UserDetails() {
     }
 
 
-    public UserDetails(String name, String cardId, String pswd) {
+    public UserDetails(String name, String cardId, String pswd,String uuid) {
         this.name = name;
         this.cardId = cardId;
         this.pswd = pswd;
+        this.uuid=uuid;
     }
 
     public String getName() {

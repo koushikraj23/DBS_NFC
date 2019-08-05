@@ -53,7 +53,7 @@ public class dbHelper{
 //    }
 
 
-    public void insert( String cardID, String name,String pswd){
+    public void insert( String cardID, String name,String pswd,String uuid){
 
 
 
@@ -62,11 +62,26 @@ System.out.println("Insert opertaion");
         user.setName(name);
         user.setCardId(cardID);
         user.setPswd(pswd);
+        user.setUuid(uuid);
 
 
+//        db.collection("users")
+//                .add(user)
+//                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+//                    @Override
+//                    public void onSuccess(DocumentReference documentReference) {
+//                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Log.w(TAG, "Error adding document", e);
+//                    }
+//                });
 
         db.collection("users")
-                .whereEqualTo("cardId", cardID)
+                .whereEqualTo("uuid", uuid)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -74,10 +89,11 @@ System.out.println("Insert opertaion");
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 UserDetails u=document.toObject(UserDetails.class);
-                                Log.d(TAG, document.getId() + " => Already present");
-
+                                Log.d(TAG, document.getId() + " => Already present for current device");
+                                System.out.println("Insert opertaion=-1");
                             }
                         } else {
+                            System.out.println("Insert opertaion=-2");
                             db.collection("users")
                                     .add(user)
                                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -102,12 +118,13 @@ System.out.println("Insert opertaion");
     }
 
 
-    public UserDetails readTagData  (String cardID){
+    public UserDetails readTagData  (String cardID,String uuid){
 
 
 
         db.collection("users")
                 .whereEqualTo("cardId", cardID)
+                .whereEqualTo("uuid", uuid)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -135,7 +152,7 @@ System.out.println("Insert opertaion");
         return user;
     }
 
-    public UserDetails readTagDataAsyn(final MainActivity.readCallback rCallback, String cardId){
+    public UserDetails readTagDataAsyn(final MainActivity.readCallback rCallback, String cardId,String uuid){
 
 //   Map<String, Object> user = new HashMap<>();
 
@@ -143,6 +160,7 @@ System.out.println("Insert opertaion");
         //  user.put("cardId", cardID);
         db.collection("users")
                 .whereEqualTo("cardId", cardId)
+                .whereEqualTo("uuid", uuid)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

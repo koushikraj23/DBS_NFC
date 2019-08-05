@@ -32,7 +32,7 @@
 
         android:text="Open Library"
         app:layout_constraintBottom_toTopOf="@+id/webView"
-        app:layout_constraintEnd_toStartOf="@+id/button2"
+        app:layout_constraintEnd_toStartOf="@+id/login"
         app:layout_constraintTop_toBottomOf="@+id/id" />
 
 
@@ -50,7 +50,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -71,7 +71,7 @@
         android:inputType="textPersonName"
         android:text="Name"
         app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintEnd_toStartOf="@+id/button2"
+        app:layout_constraintEnd_toStartOf="@+id/login"
         app:layout_constraintStart_toEndOf="@+id/message"
         app:layout_constraintTop_toBottomOf="@+id/message" />
 

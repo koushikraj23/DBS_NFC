@@ -7,12 +7,14 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.http.SslError;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +37,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -43,22 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private class fetchUser extends AsyncTask<Void, Void, UserDetails>
-    {
-        @Override
-        protected UserDetails doInBackground(Void... params) {
-           dbase=new dbHelper();
-
-            user= dbase.readTagData(tagId);
-            System.out.println("dwwdwdw"+user.getName());
-            return user;
-        }
-        @Override
-        protected void onPostExecute(UserDetails result) {
-           System.out.println("dwwdwdw"+result.getName());
-
-        }
-    }
 
     public interface readCallback{
         void onCallback(UserDetails userTemp);
@@ -79,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
     private  static String tagId;
     private static final String TAG = dbHelper.class.getName();
     private static UserDetails user=new UserDetails();
+    private EditText id;
+    private EditText pswd;
 
     public BookDetails getBookDetails() {
         return bookDetails;
@@ -92,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private BookDetails bookDetails;
     public static ArrayList<BookDetails> booklist=new ArrayList<>();
     webParser w=new webParser();
+    private String uuid;
 public void Change(){
     setContentView(R.layout.booklist);
 
@@ -100,6 +90,21 @@ public void Change(){
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        SharedPreferences wmbPreference = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isFirstRun = wmbPreference.getBoolean("FIRSTRUN", true);
+        if (isFirstRun)
+        {
+            uuid = UUID.randomUUID().toString();
+            // Code to run once
+            SharedPreferences.Editor editor = wmbPreference.edit();
+            editor.putString("uuid", uuid);
+            editor.putBoolean("FIRSTRUN", false);
+            editor.commit();
+        }
+
+
 //        setContentView(R.layout.login);
         setContentView(R.layout.scantag);
 //        setContentView(R.layout.activity_main);
@@ -158,27 +163,17 @@ public void Change(){
 
         tags.add(tagId);
         currentTagIndex = tags.size() - 1;
-
+        SharedPreferences sPrefs=PreferenceManager.getDefaultSharedPreferences(this);
+        uuid=sPrefs.getString("uuid",null);
+        System.out.println(uuid+"----------------------------------------------------------");
         readTagData();
 
 
     }
 
 
-    public  void publishProgress() {
-
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
-              //  setContentView(R.layout.booklist);
-                }
-        });
-    }
 
     public void readTagData  (){
-
 
         dbase.readTagDataAsyn (new readCallback() {
             @Override
@@ -196,13 +191,13 @@ public void Change(){
                 }else{
                     System.out.println("Login View");
                     setContentView(R.layout.login);
-                    mTextView=findViewById(R.id.message);
-                    displayTag();
+                   // mTextView=findViewById(R.id.message);
+
                     storeData();
 //                    readBookDetail();
                 }
             }
-        },tagId);
+        },tagId,uuid);
     }
     public void readBookDetail  (){
         booklist.clear();
@@ -259,13 +254,15 @@ public void Change(){
 
         public void storeData(){
 
-        Button btn=findViewById(R.id.button2);
+        Button btn=findViewById(R.id.login);
         btn.setOnClickListener(
                 new View.OnClickListener(){
 
                     @Override
                     public void onClick(View v) {
                         storeInDB();
+                     //   openWeb(v);
+
                     }
                 }
         );
@@ -274,9 +271,11 @@ public void Change(){
 
 
     public void storeInDB(){
-        EditText id =(EditText)findViewById(R.id.id);
-        EditText pswd =(EditText)findViewById(R.id.pswd);
-       Utils.storeID(this,tagId,id.getText().toString(),pswd.getText().toString());
+
+         id =(EditText)findViewById(R.id.id);
+         pswd =(EditText)findViewById(R.id.pswd);
+       Utils.storeID(this,tagId,id.getText().toString(),pswd.getText().toString(),uuid);
+
     }
 
     @Override
@@ -312,7 +311,7 @@ public void Change(){
     private void displayTag() {
         if (tags.size() == 0) return;
         final String tagWrapper = tags.get(currentTagIndex);
-       mTextView.setText("Tag " + tagWrapper);
+     //  mTextView.setText("Tag " + tagWrapper);
        // openWeb();
     }
     public void openWeb(View view) {
@@ -321,7 +320,8 @@ public void Change(){
         activity = this;
         progDailog = ProgressDialog.show(activity, "Loading", "Please wait...", true);
         progDailog.setCancelable(false);
-        String url = "https://webauth.dbs.ie/idp/profile/SAML2/Redirect/SSO;jsessionid=193exgnish94l1vpx4ob4oh57c?execution=e1s1";
+        String url = "https://library.dbs.ie/my-library/reserve-and-renew";
+
         lib_web.loadUrl(url);
 
         lib_web.getSettings().setDomStorageEnabled(true);
@@ -332,9 +332,12 @@ public void Change(){
         lib_web.setWebViewClient(new WebViewClient(){
 
             public void onPageFinished(WebView view, String url){
-
+                String js="javascript:document.getElementById('username').value='"+id.getText()+"';document.getElementById('password').value='"+pswd.getText()+"';";
                 progDailog.dismiss();
-             //   view.evaluateJavascript("javascript:document.getElementById('username').value='dbs';document.getElementById('password').value='23021995';",null);
+                System.out.println("jabas");
+                view.evaluateJavascript(js,null);
+
+//                view.evaluateJavascript("javascript:document.getElementById('username').value="+id+";document.getElementById('password').value='"+pswd+"';",null);
             }
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
