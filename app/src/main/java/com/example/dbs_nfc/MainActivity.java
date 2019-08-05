@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.http.SslError;
 import android.nfc.NfcAdapter;
@@ -13,14 +14,18 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import android.widget.EditText;
 
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,6 +38,9 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
+
+
+
 
 
     private class fetchUser extends AsyncTask<Void, Void, UserDetails>
@@ -56,7 +64,10 @@ public class MainActivity extends AppCompatActivity {
         void onCallback(UserDetails userTemp);
     }
 
-
+    public interface bookCallback{
+        void onCallback(ArrayList<BookDetails> bookTemp);
+    }
+    ListView list;
     static dbHelper dbase;
     static private ArrayList<String> tags = new ArrayList<String>();
     static private int currentTagIndex = -1;
@@ -69,25 +80,55 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = dbHelper.class.getName();
     private static UserDetails user=new UserDetails();
 
+    public BookDetails getBookDetails() {
+        return bookDetails;
+    }
+
+    public void setBookDetails(BookDetails bookDetails) {
+        this.bookDetails = bookDetails;
+//        setContentView(R.layout.booklist);
+    }
+
+    private BookDetails bookDetails;
+    public static ArrayList<BookDetails> booklist=new ArrayList<>();
+    webParser w=new webParser();
+public void Change(){
+    setContentView(R.layout.booklist);
+
+}
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.login);
         setContentView(R.layout.scantag);
 //        setContentView(R.layout.activity_main);
-
+       // setContentView(R.layout.booklist);
 //        mTextView=findViewById(R.id.message);
         adapter = NfcAdapter.getDefaultAdapter(this);
         dbase =new dbHelper();
 //        Button b=findViewById(R.id.button2);
+        list=(ListView) findViewById(R.id.bookList);
 //        b.setOnClickListener(new View.OnClickListener() {
 //            public void onClick(View v) {
-//                webParser w=new webParser();
-//                w.getWebsite();
-//
+////                setContentView(R.layout.booklist);
+////                setContentView(R.layout.activity_main);
+//           //  booklist= w.getWebsite();
+//                readBookDetail();
+//                System.out.println("kosui");
+////                for (BookDetails bk : booklist) {
+////
+////                    System.out.println("Main kosuhik:"+bk.getTitle()+"--"+bk.getAuthor()+"---"+bk.getDueDate()+"--"+bk.getrLink());
+////                }
 //            }
 //        });
-
+//        Button ba=findViewById(R.id.back);
+//        b.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//
+//                setContentView(R.layout.activity_main);
+//            }
+//        });
     }
 
     @Override
@@ -99,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
 //        Button b=findViewById(R.id.button2);
 //        b.setOnClickListener(new View.OnClickListener() {
 //            public void onClick(View v) {
+
 //                webParser w=new webParser();
 //                w.getWebsite();
 //
@@ -123,6 +165,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public  void publishProgress() {
+
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+              //  setContentView(R.layout.booklist);
+                }
+        });
+    }
+
     public void readTagData  (){
 
 
@@ -133,24 +187,75 @@ public class MainActivity extends AppCompatActivity {
                 user=userTemp;
                 System.out.println(user.getName());
                 if(user.getName()!=null){
-                    System.out.println("Activy view");
-                    setContentView(R.layout.activity_main);
-                    mTextView=findViewById(R.id.message);
-                    displayTag();
+//                    System.out.println("Activy view");
+//                    setContentView(R.layout.activity_main);
+//                    mTextView=findViewById(R.id.message);
+//                    displayTag();
+                    readBookDetail();
+
                 }else{
                     System.out.println("Login View");
                     setContentView(R.layout.login);
                     mTextView=findViewById(R.id.message);
                     displayTag();
                     storeData();
+//                    readBookDetail();
                 }
             }
         },tagId);
     }
+    public void readBookDetail  (){
+        booklist.clear();
+        System.out.println("Main kosuhik:");
+        w.getWebsite (new bookCallback() {
+            @Override
+            public void onCallback(ArrayList<BookDetails> bookTemp) {
+                Log.d(TAG,user.getCardId()+"Interfae--'"+user.getName());
+//
+                booklist=bookTemp;
+                System.out.println(user.getName());
+                for (BookDetails bk : booklist) {
 
-        public void readTagDataAsyn (final readCallback rCallback,String s){
-dbase.readTagData(tagId);
+                    System.out.println("Main kosuhik:"+bk.getTitle()+"--"+bk.getAuthor()+"---"+bk.getDueDate()+"--"+bk.getrLink());
+                }
+
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    public void run() {
+//                        setContentView(R.layout.booklist);
+//                        Button ba=findViewById(R.id.back);
+//                        ba.setOnClickListener(new View.OnClickListener() {
+//                            public void onClick(View v) {
+//
+//                                setContentView(R.layout.activity_main);
+//                            }
+//                        });
+                        System.out.println(0);
+
+                        BookAdapter  adapter=new BookAdapter(MainActivity.this,R.layout.book,booklist);
+//                        adapter.clear();
+
+                        System.out.println("1");
+                        View currentView = MainActivity.this.getWindow().getDecorView();
+
+                        System.out.println(currentView);
+                        System.out.println(MainActivity.this);
+                        list.setAdapter(adapter);
+                        System.out.println("2");
+
+                    }
+                });
+
+//                readTagDataAsyn();
+            }
+        });
+    }
+        public void readTagDataAsyn (){
+            setContentView(R.layout.login);
         }
+
+//    public void readBookDetailAsyn (final bookCallback rCallback,String s){
+//       w.getWebsite();
+//    }
 
         public void storeData(){
 
@@ -190,9 +295,9 @@ dbase.readTagData(tagId);
 
            // mTextView.setText("Scan a tag");
         }
-//
-      //  displayTag();
-//
+
+       // displayTag();
+
         adapter.enableForegroundDispatch(this, pendingIntent, null, null);
 //
     }
@@ -254,4 +359,53 @@ dbase.readTagData(tagId);
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
             handler.proceed(); // Ignore SSL certificate errors
         }}
+
+
+
+    public class BookAdapter extends ArrayAdapter<BookDetails> {
+        int resource;
+        Context context;
+        public BookAdapter(Context context, int resoure,ArrayList<BookDetails> bookDetails) {
+            super(context,resoure, bookDetails);
+            this.resource=resoure;
+            this.context=context;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // Get the data item for this position
+            BookDetails bookDetails = getItem(position);
+            // Check if an existing view is being reused, otherwise inflate the view
+//            if (convertView == null) {
+//                convertView = LayoutInflater.from(getContext()).inflate(resource,null, false);
+//            }
+            System.out.println(bookDetails);
+            LayoutInflater inflater = LayoutInflater.from(context);
+            convertView=inflater.inflate(R.layout.book, null,true);
+            // Lookup view for data population
+
+            TextView book = (TextView) convertView.findViewById(R.id.book);
+            TextView author = (TextView) convertView.findViewById(R.id.author);
+            Button renew=(Button)convertView.findViewById(R.id.renew);
+            renew.setText(bookDetails.getDueDate());
+            final String s=bookDetails.getrLink();
+            renew.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+//                    LayoutInflater inflater = LayoutInflater.from(context);
+//                    View convertView=inflater.inflate(R.layout.book, null,true);
+                    System.out.println(s);
+//                    Button renew=(Button)convertView.findViewById(R.id.renew);
+//                    renew.setText(s);
+
+                    readBookDetail();
+                }
+            });
+            // Populate the data into the template view using the data object
+            book.setText(bookDetails.getTitle());
+            author.setText(bookDetails.getAuthor());
+            // Return the completed view to render on screen
+            return convertView;
+        }
+    }
 }

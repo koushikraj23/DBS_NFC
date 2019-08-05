@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/book"
+        android:layout_width="match_parent"
+        android:layout_height="53dp"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/author"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="TextView" />
+
+    <Button
+        android:id="@+id/renew"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Renew" />
+
+</LinearLayout>
