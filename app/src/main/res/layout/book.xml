@@ -8,15 +8,18 @@
         android:id="@+id/book"
         android:layout_width="match_parent"
         android:layout_height="53dp"
-        android:text="TextView" />
+        android:text="TextView"
+        android:textSize="22sp"/>
 
     <TextView
         android:id="@+id/author"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:text="TextView" />
+        android:text="TextView"
+        android:textSize="20sp"/>
 
     <Button
+        android:focusable="false"
         android:id="@+id/renew"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

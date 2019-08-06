@@ -2,6 +2,8 @@ package com.example.dbs_nfc;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -17,6 +19,8 @@ import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.SslErrorHandler;
@@ -29,12 +33,14 @@ import android.widget.EditText;
 
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -65,9 +71,13 @@ public class MainActivity extends AppCompatActivity {
     private PendingIntent pendingIntent = null;
     private  static String tagId;
     private static final String TAG = dbHelper.class.getName();
-    private static UserDetails user=new UserDetails();
+    public static UserDetails user=new UserDetails();
     private EditText id;
     private EditText pswd;
+
+    private   TextView nbook ;
+    private TextView fine ;
+    private TextView fname ;
 
     public BookDetails getBookDetails() {
         return bookDetails;
@@ -86,8 +96,20 @@ public void Change(){
     setContentView(R.layout.booklist);
 
 }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
 
+        return super.onOptionsItemSelected(item);
+    }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -103,57 +125,26 @@ public void Change(){
             editor.putBoolean("FIRSTRUN", false);
             editor.commit();
         }
-
+        nbook = (TextView)findViewById(R.id.nbook);
+        fine = (TextView) findViewById(R.id.fine);
+         fname = (TextView) findViewById(R.id.textView2);
 
 //        setContentView(R.layout.login);
         setContentView(R.layout.scantag);
 //        setContentView(R.layout.activity_main);
        // setContentView(R.layout.booklist);
 //        mTextView=findViewById(R.id.message);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         adapter = NfcAdapter.getDefaultAdapter(this);
         dbase =new dbHelper();
-//        Button b=findViewById(R.id.button2);
+
         list=(ListView) findViewById(R.id.bookList);
-//        b.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-////                setContentView(R.layout.booklist);
-////                setContentView(R.layout.activity_main);
-//           //  booklist= w.getWebsite();
-//                readBookDetail();
-//                System.out.println("kosui");
-////                for (BookDetails bk : booklist) {
-////
-////                    System.out.println("Main kosuhik:"+bk.getTitle()+"--"+bk.getAuthor()+"---"+bk.getDueDate()+"--"+bk.getrLink());
-////                }
-//            }
-//        });
-//        Button ba=findViewById(R.id.back);
-//        b.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//
-//                setContentView(R.layout.activity_main);
-//            }
-//        });
+
     }
 
     @Override
     public void onNewIntent(Intent intent) {
         Log.d("onNewIntent", "Discovered tag with intent " + intent);
-
-      //  setContentView(R.layout.login);
-      //  mTextView=findViewById(R.id.message);
-//        Button b=findViewById(R.id.button2);
-//        b.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-
-//                webParser w=new webParser();
-//                w.getWebsite();
-//
-//            }
-//        });
-
-
-
 
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
          tagId = Utils.bytesToHex(tag.getId());
@@ -167,8 +158,10 @@ public void Change(){
         uuid=sPrefs.getString("uuid",null);
         System.out.println(uuid+"----------------------------------------------------------");
         readTagData();
-
-
+        activity = this;
+        progDailog = ProgressDialog.show(activity, "Loading", "Please wait...", true);
+        progDailog.setCancelable(false);
+        progDailog.show();
     }
 
 
@@ -181,51 +174,60 @@ public void Change(){
                 Log.d(TAG,user.getCardId()+"Interfae--'"+user.getName());
                 user=userTemp;
                 System.out.println(user.getName());
-                if(user.getName()!=null){
-//                    System.out.println("Activy view");
-//                    setContentView(R.layout.activity_main);
-//                    mTextView=findViewById(R.id.message);
-//                    displayTag();
+                if(user.getDbsID()!=null){
+//
                     readBookDetail();
 
-                }else{
+                }else  if(user.getFlag()==1){
+                    progDailog.dismiss();
+                    Toast.makeText(MainActivity.this, "Card Already present for current Device", Toast.LENGTH_SHORT).show();
+                }
+                else  if(user.getFlag()==2){
+                    progDailog.dismiss();
+                    Toast.makeText(MainActivity.this, "Device already present for current card", Toast.LENGTH_SHORT).show();
+
+                }
+                else  if(user.getFlag()==0){
                     System.out.println("Login View");
                     setContentView(R.layout.login);
-                   // mTextView=findViewById(R.id.message);
-
                     storeData();
-//                    readBookDetail();
                 }
             }
         },tagId,uuid);
     }
     public void readBookDetail  (){
         booklist.clear();
-        System.out.println("Main kosuhik:");
         w.getWebsite (new bookCallback() {
             @Override
             public void onCallback(ArrayList<BookDetails> bookTemp) {
                 Log.d(TAG,user.getCardId()+"Interfae--'"+user.getName());
-//
-                booklist=bookTemp;
-                System.out.println(user.getName());
-                for (BookDetails bk : booklist) {
 
-                    System.out.println("Main kosuhik:"+bk.getTitle()+"--"+bk.getAuthor()+"---"+bk.getDueDate()+"--"+bk.getrLink());
-                }
+                booklist=bookTemp;
+                System.out.println("-------------------temp"+bookTemp);
+if(booklist.isEmpty()){
+
+    MainActivity.this.runOnUiThread(new Runnable() {
+        public void run() {
+            nbook = (TextView)findViewById(R.id.nbook);
+            fine = (TextView) findViewById(R.id.fine);
+            fname = (TextView) findViewById(R.id.textView2);
+
+   nbook.setText(user.getBook());
+            fine.setText(user.getFine());
+            fname.setText(user.getName());
+progDailog.dismiss();
+        }
+    });
+}
+else {
+    for (BookDetails bk : booklist) {
+
+        System.out.println("Main kosuhik:" + bk.getTitle() + "--" + bk.getAuthor() + "---" + bk.getDueDate() + "--" + bk.getrLink());
+    }
 
                 MainActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
-//                        setContentView(R.layout.booklist);
-//                        Button ba=findViewById(R.id.back);
-//                        ba.setOnClickListener(new View.OnClickListener() {
-//                            public void onClick(View v) {
 //
-//                                setContentView(R.layout.activity_main);
-//                            }
-//                        });
-                        System.out.println(0);
-
                         BookAdapter  adapter=new BookAdapter(MainActivity.this,R.layout.book,booklist);
 //                        adapter.clear();
 
@@ -239,21 +241,15 @@ public void Change(){
 
                     }
                 });
-
-//                readTagDataAsyn();
+}
+//
             }
-        });
+        },user);
     }
-        public void readTagDataAsyn (){
-            setContentView(R.layout.login);
-        }
 
-//    public void readBookDetailAsyn (final bookCallback rCallback,String s){
-//       w.getWebsite();
-//    }
 
         public void storeData(){
-
+progDailog.dismiss();
         Button btn=findViewById(R.id.login);
         btn.setOnClickListener(
                 new View.OnClickListener(){
@@ -261,7 +257,7 @@ public void Change(){
                     @Override
                     public void onClick(View v) {
                         storeInDB();
-                     //   openWeb(v);
+openWeb(v);
 
                     }
                 }
@@ -292,10 +288,9 @@ public void Change(){
             pendingIntent = PendingIntent.getActivity(this, 0,
                     new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
-           // mTextView.setText("Scan a tag");
         }
 
-       // displayTag();
+
 
         adapter.enableForegroundDispatch(this, pendingIntent, null, null);
 //
@@ -308,12 +303,7 @@ public void Change(){
     }
 
 
-    private void displayTag() {
-        if (tags.size() == 0) return;
-        final String tagWrapper = tags.get(currentTagIndex);
-     //  mTextView.setText("Tag " + tagWrapper);
-       // openWeb();
-    }
+
     public void openWeb(View view) {
 
         final WebView lib_web=findViewById(R.id.webView);
@@ -326,7 +316,8 @@ public void Change(){
 
         lib_web.getSettings().setDomStorageEnabled(true);
 
-
+        lib_web.getSettings().setUseWideViewPort(true);
+        lib_web.getSettings().setLoadWithOverviewMode(true);
         lib_web.getSettings().setJavaScriptEnabled(true);
 
         lib_web.setWebViewClient(new WebViewClient(){
@@ -337,7 +328,6 @@ public void Change(){
                 System.out.println("jabas");
                 view.evaluateJavascript(js,null);
 
-//                view.evaluateJavascript("javascript:document.getElementById('username').value="+id+";document.getElementById('password').value='"+pswd+"';",null);
             }
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -376,17 +366,19 @@ public void Change(){
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            // Get the data item for this position
+
+            nbook = (TextView)findViewById(R.id.nbook);
+            fine = (TextView) findViewById(R.id.fine);
+            fname = (TextView) findViewById(R.id.textView2);
+
+            nbook.setText(user.getBook());
+            fine.setText(user.getFine());
+            fname.setText(user.getName());
             BookDetails bookDetails = getItem(position);
-            // Check if an existing view is being reused, otherwise inflate the view
-//            if (convertView == null) {
-//                convertView = LayoutInflater.from(getContext()).inflate(resource,null, false);
-//            }
-            System.out.println(bookDetails);
+
             LayoutInflater inflater = LayoutInflater.from(context);
             convertView=inflater.inflate(R.layout.book, null,true);
             // Lookup view for data population
-
             TextView book = (TextView) convertView.findViewById(R.id.book);
             TextView author = (TextView) convertView.findViewById(R.id.author);
             Button renew=(Button)convertView.findViewById(R.id.renew);
@@ -395,20 +387,20 @@ public void Change(){
             renew.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    LayoutInflater inflater = LayoutInflater.from(context);
-//                    View convertView=inflater.inflate(R.layout.book, null,true);
                     System.out.println(s);
-//                    Button renew=(Button)convertView.findViewById(R.id.renew);
-//                    renew.setText(s);
-
-                    readBookDetail();
+                    w.renewBook(s);
+//
                 }
             });
             // Populate the data into the template view using the data object
             book.setText(bookDetails.getTitle());
             author.setText(bookDetails.getAuthor());
+
+            progDailog.dismiss();
             // Return the completed view to render on screen
             return convertView;
         }
     }
+
+
 }

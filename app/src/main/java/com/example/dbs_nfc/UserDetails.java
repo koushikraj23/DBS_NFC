@@ -3,8 +3,46 @@ package com.example.dbs_nfc;
 public class UserDetails {
 
     private String name;
+
+    public String getDbsID() {
+        return dbsID;
+    }
+
+    public void setDbsID(String dbsID) {
+        this.dbsID = dbsID;
+    }
+
+    private String dbsID;
     private String cardId;
     private String pswd;
+    private String fine;
+    private String book;
+    private int flag;
+
+    public int getFlag() {
+        return flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
+    }
+
+    public String getBook() {
+        return book;
+    }
+
+    public void setBook(String book) {
+        this.book = book;
+    }
+
+    public String getFine() {
+        return fine;
+    }
+
+    public void setFine(String fine) {
+        this.fine = fine;
+    }
+
 
     public String getUuid() {
         return uuid;
