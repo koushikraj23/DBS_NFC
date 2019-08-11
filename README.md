@@ -5,6 +5,13 @@ Android Application which enables the user to use their DBS ID cards to login in
  1-NFC-koushikraj
  2-Webservice-Bharath
  
+ ----------------Document in one drive-------------------------------------------------------------------------------------------------- 
+ Document for this project can be fond in this link,its saved in one drive,so version of the word document can be also be found there
+ https://mydbs-my.sharepoint.com/:w:/g/personal/10514126_mydbs_ie/EQdE21SMMnxBn7SBnL4EGK8BG2BHR7_HtqgwKic6nOfk1w?e=EogOEH
+ 
+
+ 
+ 
  ------------------For Reference------------------------------------------------------------------------------------
  75% of the work is finished by mid week of July
  As we have other assignments deadlines near by,we are concentrating on finsihing it and then continuing this assignement,we wont be making any commits in the last week of jully
