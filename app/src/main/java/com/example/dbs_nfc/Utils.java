@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.view.View;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -29,19 +28,6 @@ final class Utils {
         return "0x" + new String(hexChars);
     }
 
-    public final static String bytesToHexAndString(byte[] bytes) {
-        if (bytes == null) return null;
-
-        return bytesToHex(bytes) + " (" + new String(bytes) + ")";
-    }
-
-    public final static String now() {
-        TimeZone tz = TimeZone.getTimeZone("UTC");
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        df.setTimeZone(tz);
-        return df.format(new Date());
-    }
-
 
     public static void showNfcSettingsDialog(final Activity app) {
         new AlertDialog.Builder(app)
@@ -61,12 +47,10 @@ final class Utils {
                 .show();
     }
 
-
-    public static  void storeID(Context context, String tagId, String name,String pswd){
+    public static  void storeID(Context context, String tagId, String dbsID,String pswd,String uuid){
         dbHelper dbase=new dbHelper();
-        dbase.insert(tagId,name,pswd);
+        dbase.insert(tagId,dbsID,pswd,uuid);
     }
-
 
 
 }
